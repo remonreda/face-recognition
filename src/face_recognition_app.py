@@ -1,18 +1,7 @@
-"""Real-time face recognition with OpenCV and the ``face_recognition`` library (dlib).
-
-Put one photo per person in ``known_faces/`` (file name = person's name, e.g. ``alice.jpg``),
-then run:
-
-    python src/face_recognition_app.py                       # webcam, press 'q' to quit
-    python src/face_recognition_app.py --image group.jpg --output outputs/group_recognized.jpg
-"""
-
 from __future__ import annotations
-
 import argparse
 import sys
 from pathlib import Path
-
 import cv2
 import face_recognition
 import numpy as np
@@ -31,8 +20,8 @@ def load_known_faces(faces_dir: Path) -> tuple[list[np.ndarray], list[str]]:
         if path.suffix.lower() not in IMAGE_EXTENSIONS:
             continue
         try:
-            image = face_recognition.load_image_file(str(path))  # RGB
-        except Exception as exc:  # corrupt / unreadable file
+            image = face_recognition.load_image_file(str(path))  
+        except Exception as exc:  
             print(f"[WARN] Could not read {path.name} ({type(exc).__name__}) - skipped")
             continue
         found = face_recognition.face_encodings(image)
@@ -95,7 +84,7 @@ def run_camera(args, encodings, names) -> None:
                 print("[WARN] Failed to read a frame from the camera")
                 break
             seen = set(recognize_frame(frame, encodings, names, args.tolerance, args.scale))
-            if seen != last_seen:  # only print when who's in view changes
+            if seen != last_seen: 
                 print(f"In view: {sorted(seen) if seen else 'nobody'}")
                 last_seen = seen
             cv2.imshow("Face Recognition (press q to quit)", frame)
